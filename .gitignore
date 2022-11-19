@@ -199,3 +199,6 @@ Icon?
 # dotnet stuff
 project.lock.json
 
+# project
+*/obj/
+
