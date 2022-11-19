@@ -7,7 +7,7 @@ using TinyUrlService.Data;
 
 namespace TinyUrlService.Persistence
 {
-    internal class UrlDeleter
+    public class UrlDeleter
     {
         readonly RecordKeeper db;
         public UrlDeleter()
@@ -15,6 +15,11 @@ namespace TinyUrlService.Persistence
             db = RecordKeeper.Instance;
         }
 
+        /// <summary>
+        /// Attempts to remove a record from the 'db'
+        /// </summary>
+        /// <param name="shortUrl">The short url associated with the entry.</param>
+        /// <returns>True if the operation was successful, else False.</returns>
         public bool DeleteRecord(string shortUrl)
         {
             // ideally would check the request to make sure

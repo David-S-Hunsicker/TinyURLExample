@@ -17,13 +17,6 @@ namespace TinyUrlService.Data
 
         public UrlEntity() { }
 
-        public UrlEntity(string userID, ulong id, string longUrl, string shortUrl, DateTime created)
-        {
-            this.userID = userID;
-            this.longUrl = longUrl;
-            this.shortUrl = shortUrl;
-            this.clicks = 0;
-            this.created = created;
-        }
+
     }
 }

@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TinyUrlService.BusinessLogic;
+﻿using TinyUrlService.BusinessLogic;
 using TinyUrlService.Data;
 
 namespace TinyUrlService.Persistence
 {
-    internal class UrlAdder
+    public class UrlAdder
     {
+        const string baseUrl = "TinyLittleUrl.com/";
         RecordKeeper db;
         public UrlAdder()
         {
             db = RecordKeeper.Instance;
         }
 
-        string CreateRecord(string longUrl)
+        /// <summary>
+        /// Creates a new short url when given a long url.
+        /// </summary>
+        /// <param name="longUrl"></param>
+        /// <returns>The generated short url</returns>
+        public string CreateRecord(string longUrl)
         {
             
             if (UrlValidator.IsValid(longUrl))
