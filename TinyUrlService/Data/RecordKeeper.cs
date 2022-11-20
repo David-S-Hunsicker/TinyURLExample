@@ -137,7 +137,12 @@ namespace TinyUrlService.Data
             {
                 return 0;
             }
-            return ulong.Parse(shortUrl.Substring(Constants.Constants.baseUrl.Length));
+
+            if(ulong.TryParse(shortUrl.Substring(Constants.Constants.baseUrl.Length), out ulong result))
+            {
+                return result;
+            }
+            return 0;
         }
     }
 }
