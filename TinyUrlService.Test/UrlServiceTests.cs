@@ -117,5 +117,40 @@ namespace TinyUrlService.Test
             Assert.AreEqual((ulong)0, r.GetClicks("FakeUrlThatDoesn'tExist"));
 
         }
+
+        [TestMethod]
+        public void ShouldResolveFromCacheEvenIfDbHasNoEntry()
+        {
+            // Assign
+            var longUrl = "example.com";
+            var r = new UrlResolver();
+            var a = new UrlAdder();
+            var d = new UrlDeleter();
+            // Act
+            var shortUrl = a.CreateRecord(longUrl);
+            r.Resolve(shortUrl);//loads into cache
+            d.DeleteRecord(shortUrl);
+            // Assert
+            Assert.AreEqual(longUrl, r.Resolve(shortUrl));
+
+            // Act
+            r.RemoveFromCache(shortUrl);
+            ////Assert
+            Assert.AreEqual("", r.Resolve(shortUrl));
+        }
+
+        [TestMethod]
+        public void ShouldReturnFalseWhenTryingToDeleteEntryThatDoesNotExist()
+        {
+            // Assign
+            var d = new UrlDeleter();
+
+            // Act
+            var shortUrl = "a";
+            d.DeleteRecord(shortUrl);
+
+            // Assert
+            Assert.AreEqual(false, d.DeleteRecord(shortUrl));
+        }
     }
 }

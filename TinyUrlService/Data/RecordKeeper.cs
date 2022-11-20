@@ -122,6 +122,9 @@ namespace TinyUrlService.Data
         /// <param name="shortUrl"></param>
         internal void Bump(string shortUrl)
         {
+            // Edge case where the cash contains the entry but the db does not.
+            if(!records.ContainsKey(UnHash(shortUrl))) { return; }
+
             records[UnHash(shortUrl)].clicks++;
         }
 
