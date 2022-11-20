@@ -75,7 +75,7 @@ namespace TinyUrlService.Test
 
         [TestMethod]
         public void ShouldReturnEmptyStringWhenEntryDoesNotExist()
-        { 
+        {
             // Assign
             var longUrl = "example.com";
             var r = new UrlResolver();
@@ -145,12 +145,29 @@ namespace TinyUrlService.Test
             // Assign
             var d = new UrlDeleter();
 
+
             // Act
             var shortUrl = "a";
             d.DeleteRecord(shortUrl);
 
             // Assert
             Assert.AreEqual(false, d.DeleteRecord(shortUrl));
+        }
+
+        [TestMethod]
+        public void ShouldAllowCustomShortUrl()
+        {
+            // Assign
+            var a = new UrlAdder();
+            var r = new UrlResolver();
+
+            // Act
+            var desiredShort = "Taco Bell";
+            var longUrl = "it'sNotTacoBell";
+            var result = a.CreateCustomRecord(longUrl, desiredShort);
+
+            // Assert
+            Assert.AreEqual(longUrl, r.Resolve(result));
         }
     }
 }

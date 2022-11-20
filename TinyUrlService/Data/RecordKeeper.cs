@@ -23,10 +23,10 @@ namespace TinyUrlService.Data
         private static RecordKeeper? instance;
 
         //          Id,   Object
-        private Dictionary<ulong, UrlEntity> records;
+        private Dictionary<string, UrlEntity> records;
         private RecordKeeper()
         {
-            records = new Dictionary<ulong, UrlEntity>();
+            records = new Dictionary<string, UrlEntity>();
         }
 
         /// <summary>
@@ -49,6 +49,15 @@ namespace TinyUrlService.Data
         /// <returns>The short version of the UrlEntry</returns>
         public string Add(UrlEntity entry)
         {
+            // Custom URL
+            if (entry.shortUrl != null && !records.ContainsKey(entry.shortUrl))
+            {
+                var stringId = entry.shortUrl;
+                entry.shortUrl = baseUrl+ stringId;
+                records.Add(stringId, entry);
+                return entry.shortUrl;
+            }
+
             ulong id;
             if (reusableIds.Count > 0)
             {
@@ -62,7 +71,7 @@ namespace TinyUrlService.Data
             entry.shortUrl = baseUrl + id;
 
             urlId++;
-            records.Add(entry.id, entry);
+            records.Add(entry.id.ToString(), entry);
             return entry.shortUrl;
         }
 
@@ -73,12 +82,12 @@ namespace TinyUrlService.Data
         /// <returns>True if the operation succeeded, Else False</returns>
         public bool Delete(string shortUrl)
         {
-            var shortUrlId = UnHash(shortUrl);
-            if (records.ContainsKey(shortUrlId))
+            var shortUrlId = UrlTrim(shortUrl);
+            if (records.ContainsKey(shortUrlId.ToString()))
             {
-                var e = records[shortUrlId];
-                reusableIds.Enqueue(shortUrlId);
-                records.Remove(shortUrlId);
+                var e = records[shortUrlId.ToString()];
+                reusableIds.Enqueue(ulong.Parse(shortUrlId));
+                records.Remove(shortUrlId.ToString());
                 return true;
             }
             return false;
@@ -91,13 +100,15 @@ namespace TinyUrlService.Data
         /// <returns>The long Url that the short url maps to</returns>
         public string Read(string shortUrl)
         {
-            var shortUrlId = UnHash(shortUrl);
-            if (records.TryGetValue(shortUrlId, out UrlEntity record))
+            var shortUrlId = UrlTrim(shortUrl);
+            if (records.TryGetValue(shortUrlId.ToString(), out UrlEntity record))
             {
                 record.clicks++;
                 return record.longUrl;
 
             }
+            // Custom Url
+
             return "";
         }
 
@@ -108,7 +119,7 @@ namespace TinyUrlService.Data
         /// <returns>The number of times a link was resolved.</returns>
         public ulong GetClicks(string shortUrl)
         {
-            var shortUrlId = UnHash(shortUrl);
+            var shortUrlId = UrlTrim(shortUrl);
             if (records.ContainsKey(shortUrlId))
             {
                 return records[shortUrlId].clicks;
@@ -123,9 +134,9 @@ namespace TinyUrlService.Data
         internal void Bump(string shortUrl)
         {
             // Edge case where the cash contains the entry but the db does not.
-            if(!records.ContainsKey(UnHash(shortUrl))) { return; }
+            if (!records.ContainsKey(UrlTrim(shortUrl))) { return; }
 
-            records[UnHash(shortUrl)].clicks++;
+            records[UrlTrim(shortUrl)].clicks++;
         }
 
         /// <summary>
@@ -133,19 +144,15 @@ namespace TinyUrlService.Data
         /// </summary>
         /// <param name="shortUrl"></param>
         /// <returns>The ID of the entry</returns>
-        private ulong UnHash(string shortUrl)
+        private string UrlTrim(string shortUrl)
         {
             // bad data
             if (shortUrl.Length < Constants.Constants.baseUrl.Length + 1)
             {
-                return 0;
+                return "0";
             }
 
-            if(ulong.TryParse(shortUrl.Substring(Constants.Constants.baseUrl.Length), out ulong result))
-            {
-                return result;
-            }
-            return 0;
+            return shortUrl.Substring(Constants.Constants.baseUrl.Length);
         }
     }
 }

@@ -30,5 +30,19 @@ namespace TinyUrlService.Persistence
             }
             return "failed to create";
         }
+
+        public string CreateCustomRecord(string longUrl, string desiredShortUrl)
+        {
+            if(UrlValidator.IsValid(longUrl)) 
+            {
+                var e = new UrlEntity();
+                e.userID = "0";
+                e.longUrl = longUrl;
+                e.clicks = 0;
+                e.shortUrl= desiredShortUrl;
+                return db.Add(e);
+            }
+            return "failed to create";
+        }
     }
 }
