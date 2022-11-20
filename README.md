@@ -7,10 +7,12 @@ Generally we want our program to have the appearance of a rest controller which 
 
 Program.cs isn't used because there are unit tests to cover most use cases but it does have functions in it that take a form similar to a rest controller.
 
+The resolver has caching because we definitely don't want our db getting hit on every request. Because this is just an example and not a real service we don't have any kind of real message broker that the cache can subscribe to all deletes. The side effect of this is the caches can store entries that have been deleted and cause undesirable behavior.
+
 
 ## Hashing / Mapping
 
-if we had more time instead of the string and ulong implementation where we get incremented by one we'd use something like [0-9, a-z, A-Z]. All of those combined are 62^n where n is the length of the short url. At length 7 we're into the trillions of URL which should be enough foro a while.
+If we had more time instead of the string and ulong implementation where we get incremented by one we'd use something like [0-9, a-z, A-Z]. All of those combined are 62^n where n is the length of the short url. At length 7 we're into the trillions of URL which should be enough for a while.
 
 
 ## Data
